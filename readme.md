@@ -67,11 +67,11 @@ COMMANDS:
    tcpspy,  ts   使用tcp协议探测
    udpspy,  us   使用udp协议探测
    version, v    显示版本信息
-   help, h       实现帮助信息
+   help, h       显示帮助信息
 
 GLOBAL OPTIONS:
    --net value, -n value      指定探测网段(172,192,10,all) (默认: "all")
-   --number value, -g value   指定IP末尾数字(默认: 1, 2, 254, 255)
+   --number value, -i value   指定IP末尾数字(默认: 1, 2, 254, 255)
    --thread value, -t value   并发数量(默认: 200)
    --timeout value, -m value  发包超时(默认: 3秒)
    --output value, -o value   结果保存路径(默认: "result.txt")
