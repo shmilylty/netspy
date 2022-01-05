@@ -31,13 +31,13 @@ func Execute() {
 			// todo 目前cli v2.3有bug 不能使用IntSliceFlag 等待cli发布新版本使用IntSliceFlag
 			//&cli.IntSliceFlag{
 			//	Name:    "number",
-			//	Aliases: []string{"g"},
-			//	Usage:   "tail number of the gateway",
+			//	Aliases: []string{"i"},
+			//	Usage:   "tail number of the ip",
 			//	Value:   cli.NewIntSlice(1, 2, 254, 255),
 			//},
 			&cli.StringSliceFlag{
 				Name:    "number",
-				Aliases: []string{"g"},
+				Aliases: []string{"i"},
 				Usage:   "tail number of the ip",
 				Value:   cli.NewStringSlice("1", "2", "254", "255"),
 			},
