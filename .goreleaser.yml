@@ -1,0 +1,59 @@
+project_name: netspy
+
+before:
+  hooks:
+  - go mod download
+
+builds:
+  -
+    main: ./cmd/netspy/
+    binary: netspy
+    goos:
+      - windows
+      - linux
+      - darwin
+      - freebsd
+    goarch:
+      - amd64
+      - 386
+      - arm
+      - arm64
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goos: darwin
+        goarch: arm
+      - goos: windows
+        goarch: 386
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+      - goos: freebsd
+        goarch: arm
+
+archives:
+  -
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    replacements:
+      darwin: macos
+      386: i386
+    wrap_in_directory: true
+    format: zip
+    files:
+      - readme.md
+
+checksum:
+  name_template: "{{ .ProjectName }}_checksums.txt"
+
+changelog:
+  sort: desc
+  filters:
+    exclude:
+    - '^MERGE'
+    - "{{ .Tag }}"
+
+release:
+  github:
+    owner: shmilylty
+    name: netspy
