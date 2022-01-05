@@ -2,15 +2,56 @@ package spy
 
 import (
 	"fmt"
+	"math/rand"
+	"strconv"
 	"strings"
 )
+
+func find(slice []string, val string) (int, bool) {
+	for i, item := range slice {
+		if item == val {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
+func genRandNum(count int, exist []string) []string {
+	remain := 256 - len(exist)
+	if count >= remain {
+		count = remain
+	}
+	var randNum []string
+	for {
+		n := rand.Intn(256)
+		s := strconv.Itoa(n)
+		_, isFind := find(exist, s)
+		if isFind {
+			continue
+		}
+		_, isFind = find(randNum, s)
+		if isFind {
+			continue
+		}
+		randNum = append(randNum, s)
+		if len(randNum) == count {
+			break
+		}
+	}
+	return randNum
+}
 
 func genBClassIps(ip string, num []string) [][]string {
 	var ips [][]string
 	s := strings.Split(ip, ".")
+	randNum := genRandNum(3, num)
 	for i := 0; i < 255; i++ {
 		var ipg []string
 		for _, v := range num {
+			// ip group
+			ipg = append(ipg, fmt.Sprintf("%s.%s.%d.%s", s[0], s[1], i, v))
+		}
+		for _, v := range randNum {
 			// ip group
 			ipg = append(ipg, fmt.Sprintf("%s.%s.%d.%s", s[0], s[1], i, v))
 		}
