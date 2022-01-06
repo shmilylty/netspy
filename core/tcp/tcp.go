@@ -72,6 +72,7 @@ func check(ip string) bool {
 }
 
 func Spy(c *cli.Context) {
+	Log.Info("use tcp protocol to spy")
 	timeout = time.Duration(c.Int("timeout")) * time.Second
 	ports = c.IntSlice("port")
 	spy.Spy(c, check)

@@ -14,7 +14,7 @@ func InitLog(c *cli.Context) {
 		Log.SetLevel("debug")
 	}
 	if c.Bool("silent") {
-		Log.SetLevel("info")
+		Log.SetLevel("error")
 		Log.SetTimeFormat("")
 	}
 	logFile, err := os.OpenFile("netspy.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)

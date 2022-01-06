@@ -38,7 +38,8 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 				for _, ip := range ipg {
 					if check(ip) {
 						online = append(online, ip)
-						Log.Infof("%s/24", ip)
+						Log.Debugf("%s alive", ip)
+						Log.Printf("%s/24", ip)
 						mutex.Lock()
 						_, err := file.WriteString(fmt.Sprintf("%s/24\n", ip))
 						if err != nil {
@@ -48,6 +49,7 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 						// 发现段内一个IP存活表示该段存活 不再检查该段
 						break
 					} else {
+						Log.Debugf("%s dead", ip)
 						continue
 					}
 				}

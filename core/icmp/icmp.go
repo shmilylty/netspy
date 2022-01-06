@@ -50,13 +50,13 @@ func check(ip string) bool {
 	}
 	stats := pinger.Statistics()
 	if stats.PacketsRecv > 0 {
-		Log.Debugf("%s alive", ip)
 		return true
 	}
 	return false
 }
 
 func Spy(c *cli.Context) {
+	Log.Info("use icmp protocol to spy")
 	checkPermission()
 	times = c.Int("times")
 	timeout = time.Duration(c.Int("timeout")) * time.Second
