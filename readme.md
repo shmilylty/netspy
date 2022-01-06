@@ -72,7 +72,7 @@ COMMANDS:
 GLOBAL OPTIONS:
    --net value, -n value      指定探测网段(172,192,10,all) (默认: "all")
    --number value, -i value   指定IP末尾数字(默认: 1, 2, 254, 255)
-   --thread value, -t value   并发数量(默认: 200)
+   --thread value, -t value   并发数量(默认: cpu * 10)
    --timeout value, -m value  发包超时(默认: 3秒)
    --output value, -o value   结果保存路径(默认: "result.txt")
    --silent, -s               只显示存活网段(默认: false)

@@ -5,6 +5,7 @@ import (
 	"github.com/urfave/cli/v2"
 	. "netspy/core/log"
 	"os"
+	"runtime"
 	"sync"
 )
 
@@ -57,9 +58,16 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 	return online
 }
 
+func setThread() int {
+	return runtime.NumCPU() * 10
+}
+
 func Spy(c *cli.Context, check func(ip string) bool) {
 	path = c.Path("output")
 	thread = c.Int("thread")
+	if thread == 0 {
+		thread = setThread()
+	}
 	keyword := c.String("net")
 	number := c.StringSlice("number")
 	var ips, all [][]string
