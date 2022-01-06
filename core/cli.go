@@ -42,9 +42,10 @@ func Execute() {
 				Value:   cli.NewStringSlice("1", "2", "254", "255"),
 			},
 			&cli.IntFlag{
-				Name:    "thread",
-				Aliases: []string{"t"},
-				Usage:   "number of concurrency (default: cpu * 10)",
+				Name:        "thread",
+				Aliases:     []string{"t"},
+				Usage:       "number of concurrency ",
+				DefaultText: "cpu * 10",
 			},
 			&cli.IntFlag{
 				Name:    "timeout",
