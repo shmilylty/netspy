@@ -44,15 +44,15 @@ func genRandNum(count int, exist []string) []string {
 func genBClassIps(ip string, num []string) [][]string {
 	var ips [][]string
 	s := strings.Split(ip, ".")
-	randNum := genRandNum(3, num)
 	for i := 0; i < 255; i++ {
+		// 每个段都随机生成IP尾数
+		randNum := genRandNum(3, num)
+		// ip group
 		var ipg []string
 		for _, v := range num {
-			// ip group
 			ipg = append(ipg, fmt.Sprintf("%s.%s.%d.%s", s[0], s[1], i, v))
 		}
 		for _, v := range randNum {
-			// ip group
 			ipg = append(ipg, fmt.Sprintf("%s.%s.%d.%s", s[0], s[1], i, v))
 		}
 		ips = append(ips, ipg)
