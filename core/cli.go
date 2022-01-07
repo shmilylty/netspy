@@ -4,7 +4,6 @@ import (
 	"github.com/urfave/cli/v2"
 	"netspy/core/arp"
 	"netspy/core/icmp"
-	. "netspy/core/log"
 	"netspy/core/ping"
 	"netspy/core/tcp"
 	"netspy/core/udp"
@@ -169,12 +168,12 @@ func Execute() {
 			},
 		},
 		Before: func(c *cli.Context) error {
-			InitLog(c)
+			Init(c)
 			return nil
 		},
 	}
 	err := app.Run(os.Args)
 	if err != nil {
-		Log.Fatal(err)
+		panic(err)
 	}
 }

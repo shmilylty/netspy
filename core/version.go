@@ -1,9 +1,9 @@
 package core
 
-const VERSION = "0.0.1"
+const VERSION = "v0.0.1"
 
 func GetVersion() string {
-	return "version: " + VERSION
+	return "netspy: " + VERSION
 }
 
 func PrintVersion() {
