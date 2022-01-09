@@ -1,39 +1,42 @@
 package spy
 
 import (
-	"fmt"
 	"math/rand"
-	"strconv"
-	"strings"
+	"net"
 )
 
-func find(slice []string, val string) (int, bool) {
-	for i, item := range slice {
-		if item == val {
-			return i, true
+func find(slice []int, i int) (int, bool) {
+	for index, value := range slice {
+		if value == i {
+			return index, true
 		}
 	}
 	return -1, false
 }
 
-func genRandNum(count int, exist []string) []string {
+func genRandNum(count int, exist []int) []int {
+	var randNum []int
+	if count == 0 {
+		return randNum
+	}
 	remain := 256 - len(exist)
 	if count >= remain {
 		count = remain
 	}
-	var randNum []string
 	for {
-		n := rand.Intn(256)
-		s := strconv.Itoa(n)
-		_, isFind := find(exist, s)
+		i := rand.Intn(256)
+		if i == 0 {
+			continue
+		}
+		_, isFind := find(exist, i)
 		if isFind {
 			continue
 		}
-		_, isFind = find(randNum, s)
+		_, isFind = find(randNum, i)
 		if isFind {
 			continue
 		}
-		randNum = append(randNum, s)
+		randNum = append(randNum, i)
 		if len(randNum) == count {
 			break
 		}
@@ -41,55 +44,22 @@ func genRandNum(count int, exist []string) []string {
 	return randNum
 }
 
-func genBClassIps(ip string, num []string) [][]string {
+func GenIPS(netips []net.IP, endNum []int, count int) [][]string {
 	var ips [][]string
-	s := strings.Split(ip, ".")
-	for i := 0; i < 255; i++ {
-		// 每个段都随机生成IP尾数
-		randNum := genRandNum(3, num)
+	for _, ip := range netips {
 		// ip group
 		var ipg []string
-		for _, v := range num {
-			ipg = append(ipg, fmt.Sprintf("%s.%s.%d.%s", s[0], s[1], i, v))
+		for _, i := range endNum {
+			ip[3] = byte(i)
+			ipg = append(ipg, ip.String())
 		}
-		for _, v := range randNum {
-			ipg = append(ipg, fmt.Sprintf("%s.%s.%d.%s", s[0], s[1], i, v))
+		// 每个段都随机生成IP尾数
+		randNum := genRandNum(count, endNum)
+		for _, i := range randNum {
+			ip[3] = byte(i)
+			ipg = append(ipg, ip.String())
 		}
 		ips = append(ips, ipg)
-	}
-	return ips
-}
-
-func genAClassIps(ip string, num []string) [][]string {
-	var ips [][]string
-	s := strings.Split(ip, ".")
-	for i := 0; i < 255; i++ {
-		ip = fmt.Sprintf("%s.%d.%s.%s", s[0], i, s[2], s[3])
-		ips = genBClassIps(ip, num)
-	}
-	return ips
-}
-
-func gen172ClassIps(ip string, num []string) [][]string {
-	var ips [][]string
-	s := strings.Split(ip, ".")
-	for i := 16; i < 32; i++ {
-		ip = fmt.Sprintf("%s.%d.%s.%s", s[0], i, s[2], s[3])
-		ips = genBClassIps(ip, num)
-	}
-	return ips
-}
-
-func GenIps(ip string, num []string, t string) [][]string {
-	var ips [][]string
-	if t == "b" {
-		ips = genBClassIps(ip, num)
-	}
-	if t == "a" {
-		ips = genAClassIps(ip, num)
-	}
-	if t == "172" {
-		ips = gen172ClassIps(ip, num)
 	}
 	return ips
 }

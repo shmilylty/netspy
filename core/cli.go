@@ -16,17 +16,17 @@ func Execute() {
 		Name:  "netspy",
 		Usage: "powerful intranet segment spy tool",
 		Flags: []cli.Flag{
-			&cli.StringFlag{
+			&cli.StringSliceFlag{
 				Name:    "net",
 				Aliases: []string{"n"},
-				Usage:   "specify spy network segment(172,192,10,all)",
-				Value:   "all",
+				Usage:   "specify spy network segment",
+				Value:   cli.NewStringSlice("192", "172", "10"),
 			},
-			//&cli.StringFlag{
-			//	Name:    "cidr",
-			//	Aliases: []string{"c"},
-			//	Usage:   "specify spy cidr",
-			//},
+			&cli.StringSliceFlag{
+				Name:    "cidr",
+				Aliases: []string{"c"},
+				Usage:   "specify spy cidr",
+			},
 			// todo 目前cli v2.3有bug 不能使用IntSliceFlag 等待cli发布新版本使用IntSliceFlag
 			//&cli.IntSliceFlag{
 			//	Name:    "number",
@@ -35,28 +35,34 @@ func Execute() {
 			//	Value:   cli.NewIntSlice(1, 2, 254, 255),
 			//},
 			&cli.StringSliceFlag{
-				Name:    "number",
-				Aliases: []string{"i"},
-				Usage:   "tail number of the ip",
-				Value:   cli.NewStringSlice("1", "2", "254", "255"),
+				Name:    "end",
+				Aliases: []string{"e"},
+				Usage:   "specify the ending digits of the ip",
+				Value:   cli.NewStringSlice("1", "254", "2", "255"),
+			},
+			&cli.IntFlag{
+				Name:    "random",
+				Aliases: []string{"r"},
+				Usage:   "the number of random ending digits in ip",
+				Value:   3,
 			},
 			&cli.IntFlag{
 				Name:        "thread",
 				Aliases:     []string{"t"},
-				Usage:       "number of concurrency ",
-				DefaultText: "cpu * 10",
+				Usage:       "number of concurrency",
+				DefaultText: "cpu * 20",
 			},
 			&cli.IntFlag{
 				Name:    "timeout",
 				Aliases: []string{"m"},
 				Usage:   "packet sending timeout",
-				Value:   3,
+				Value:   1,
 			},
 			&cli.PathFlag{
 				Name:    "output",
 				Aliases: []string{"o"},
-				Usage:   "output result to file in text format",
-				Value:   "result.txt",
+				Usage:   "output alive result to file in text format",
+				Value:   "alive.txt",
 			},
 			&cli.BoolFlag{
 				Name:    "silent",

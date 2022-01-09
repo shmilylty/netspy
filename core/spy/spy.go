@@ -3,9 +3,12 @@ package spy
 import (
 	"fmt"
 	"github.com/urfave/cli/v2"
+	"net"
 	. "netspy/core/log"
+	"netspy/core/misc"
 	"os"
 	"runtime"
+	"strconv"
 	"sync"
 )
 
@@ -60,37 +63,143 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 	return online
 }
 
-func setThread() int {
-	return runtime.NumCPU() * 10
+func setThread(i int) int {
+	if i == 0 {
+		return runtime.NumCPU() * 10
+	}
+	return i
+}
+
+func genNetIP(start, end net.IP) []net.IP {
+	var netip []net.IP
+	// 10.0.0.0 - 10.0.0.255 情况
+	// 10.0.0.0 - 10.0.10.255 情况
+	if start[0] == end[0] && start[1] == end[1] {
+		for k := start[2]; k <= end[2]; k++ {
+			// 放入循环是为了每次循环创建内存地址不同的新IP
+			ip := make(net.IP, len(start))
+			// 深拷贝
+			copy(ip, start)
+			ip[2] = k
+			netip = append(netip, ip)
+			if k == 255 {
+				break
+			}
+		}
+	}
+	// 10.0.0.0 - 10.10.255.255 情况
+	if start[0] == end[0] && start[1] != end[1] {
+		for j := start[1]; j <= end[1]; j++ {
+			for k := start[2]; k <= end[2]; k++ {
+				ip := make(net.IP, len(start))
+				copy(ip, start)
+				ip[1] = j
+				ip[2] = k
+				netip = append(netip, ip)
+				if k == 255 {
+					break
+				}
+			}
+			if j == 255 {
+				break
+			}
+		}
+	}
+
+	// 10.0.0.0 - 20.255.255.255 这种情况不一定存在
+	if start[0] != end[0] {
+		for i := start[0]; i <= end[0]; i++ {
+			for j := start[1]; j <= end[1]; j++ {
+				for k := start[2]; k <= end[2]; k++ {
+					ip := make(net.IP, len(start))
+					copy(ip, start)
+					ip[0] = i
+					ip[1] = j
+					ip[2] = k
+					netip = append(netip, ip)
+					if k == 255 {
+						break
+					}
+				}
+				if j == 255 {
+					break
+				}
+			}
+			if i == 255 {
+				break
+			}
+		}
+	}
+	return netip
+}
+
+func getNetIPS(cidrs []string) []net.IP {
+	var netips []net.IP
+	for _, cidr := range cidrs {
+		_, ipnet, err := net.ParseCIDR(cidr)
+		if err != nil {
+			Log.Fatal(err)
+		}
+		start := ipnet.IP
+		end := misc.CalcBcstIP(ipnet)
+		Log.Infof("%v is from %v to %v", cidr, start, end)
+		netip := genNetIP(start, end)
+		netips = append(netips, netip...)
+	}
+	return netips
+}
+
+func getAllCIDR(cidrs, keywords []string) []string {
+	var all []string
+	if cidrs == nil {
+		for _, keyword := range keywords {
+			if keyword == "192" {
+				all = append(all, "192.168.0.0/16")
+			}
+			if keyword == "172" {
+				all = append(all, "172.16.0.0/12")
+			}
+			if keyword == "10" {
+				all = append(all, "10.0.0.0/8")
+			}
+		}
+		return all
+	}
+	for _, cidr := range cidrs {
+		_, _, err := net.ParseCIDR(cidr)
+		if err != nil {
+			Log.Error(err)
+			continue
+		}
+		all = append(all, cidr)
+	}
+	return all
+}
+
+func checkEndNum(nums []string) []int {
+	var tail []int
+	for _, s := range nums {
+		i, err := strconv.Atoi(s)
+		if err != nil {
+			Log.Error(err)
+			continue
+		}
+		if i >= 0 && i <= 255 {
+			tail = append(tail, i)
+		}
+	}
+	return tail
 }
 
 func Spy(c *cli.Context, check func(ip string) bool) {
+	thread = setThread(c.Int("thread"))
 	path = c.Path("output")
-	thread = c.Int("thread")
-	if thread == 0 {
-		thread = setThread()
-	}
-	keyword := c.String("net")
-	number := c.StringSlice("number")
-	var ips, all [][]string
-	if keyword == "all" || keyword == "192" {
-		Log.Info("start to spy 192.168.0.0/16")
-		ips = GenIps("192.168.0.1", number, "b")
-		all = append(all, ips...)
-		goSpy(ips, check)
-	}
-
-	if keyword == "all" || keyword == "172" {
-		Log.Info("start to spy 172.16.0.0/12")
-		ips = GenIps("172.16.0.0", number, "172")
-		all = append(all, ips...)
-		goSpy(ips, check)
-	}
-
-	if keyword == "all" || keyword == "10" {
-		Log.Info("start to spy 10.0.0.0/8")
-		ips = GenIps("10.0.0.1", number, "a")
-		all = append(all, ips...)
-		goSpy(ips, check)
-	}
+	number := checkEndNum(c.StringSlice("end"))
+	keywords := c.StringSlice("net")
+	cidrs := c.StringSlice("cidr")
+	allcidr := getAllCIDR(cidrs, keywords)
+	netips := getNetIPS(allcidr)
+	count := c.Int("random")
+	ips := GenIPS(netips, number, count)
+	goSpy(ips, check)
 }
