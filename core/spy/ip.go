@@ -19,7 +19,7 @@ func genRandNum(count int, exist []int) []int {
 	if count == 0 {
 		return randNum
 	}
-	remain := 256 - len(exist)
+	remain := 255 - len(exist)
 	if count >= remain {
 		count = remain
 	}
