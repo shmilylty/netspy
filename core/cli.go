@@ -25,7 +25,7 @@ func Execute() {
 			&cli.StringSliceFlag{
 				Name:    "cidr",
 				Aliases: []string{"c"},
-				Usage:   "specify spy cidr",
+				Usage:   "specify spy cidr(e.g. 172.16.0.0/12)",
 			},
 			// todo 目前cli v2.3有bug 不能使用IntSliceFlag 等待cli发布新版本使用IntSliceFlag
 			//&cli.IntSliceFlag{

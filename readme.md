@@ -71,10 +71,11 @@ COMMANDS:
 
 GLOBAL OPTIONS:
    --net value, -n value      指定探测网段(默认: "192", "172", "10")
+   --cidr value, -c value     指定探测CIDR(例如: 172.16.0.0/12)
    --end value, -e value      指定IP末尾数字(默认: 1, 254, 2, 255)
    --random value, -r value   IP随机末尾数字的个数(default: 3)
    --thread value, -t value   并发数量(默认: cpu * 20)
-   --timeout value, -m value  发包超时(默认: 3秒)
+   --timeout value, -m value  发包超时(默认: 1秒)
    --output value, -o value   存活网段结果保存路径(默认: "alive.txt")
    --silent, -s               只显示存活网段(默认: false)
    --debug, -d                显示调试信息(默认: false)

@@ -193,11 +193,14 @@ func checkEndNum(nums []string) []int {
 
 func Spy(c *cli.Context, check func(ip string) bool) {
 	thread = setThread(c.Int("thread"))
+	Log.Debugf("%v threads", thread)
 	path = c.Path("output")
+	Log.Debugf("save path: %v", path)
 	number := checkEndNum(c.StringSlice("end"))
 	keywords := c.StringSlice("net")
 	cidrs := c.StringSlice("cidr")
 	allcidr := getAllCIDR(cidrs, keywords)
+	Log.Debugf("all cidr %v", allcidr)
 	netips := getNetIPS(allcidr)
 	count := c.Int("random")
 	ips := GenIPS(netips, number, count)
