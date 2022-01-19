@@ -15,6 +15,7 @@ import (
 var (
 	thread int
 	path   string
+	force  bool
 	mutex  = new(sync.Mutex)
 )
 
@@ -50,7 +51,10 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 						}
 						mutex.Unlock()
 						// 发现段内一个IP存活表示该段存活 不再检查该段
-						break
+						if !force {
+							println("now")
+							break
+						}
 					} else {
 						Log.Debugf("%s dead", ip)
 						continue
@@ -196,6 +200,7 @@ func Spy(c *cli.Context, check func(ip string) bool) {
 	Log.Debugf("%v threads", thread)
 	path = c.Path("output")
 	Log.Debugf("save path: %v", path)
+	force = c.Bool("force")
 	number := checkEndNum(c.StringSlice("end"))
 	keywords := c.StringSlice("net")
 	cidrs := c.StringSlice("cidr")

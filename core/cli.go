@@ -46,6 +46,12 @@ func Execute() {
 				Usage:   "the number of random ending digits in ip",
 				Value:   3,
 			},
+			&cli.BoolFlag{
+				Name:    "force",
+				Aliases: []string{"f"},
+				Usage:   "force spy all generated ip",
+				Value:   false,
+			},
 			&cli.IntFlag{
 				Name:        "thread",
 				Aliases:     []string{"t"},
