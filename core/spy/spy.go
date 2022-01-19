@@ -65,7 +65,7 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 
 func setThread(i int) int {
 	if i == 0 {
-		return runtime.NumCPU() * 10
+		return runtime.NumCPU() * 20
 	}
 	return i
 }
