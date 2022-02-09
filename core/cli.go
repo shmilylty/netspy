@@ -17,12 +17,6 @@ func Execute() {
 		Usage: "powerful intranet segment spy tool",
 		Flags: []cli.Flag{
 			&cli.StringSliceFlag{
-				Name:    "net",
-				Aliases: []string{"n"},
-				Usage:   "specify spy network segment",
-				Value:   cli.NewStringSlice("192", "172", "10"),
-			},
-			&cli.StringSliceFlag{
 				Name:    "cidr",
 				Aliases: []string{"c"},
 				Usage:   "specify spy cidr(e.g. 172.16.0.0/12)",
@@ -69,6 +63,12 @@ func Execute() {
 				Aliases: []string{"o"},
 				Usage:   "output alive result to file in text format",
 				Value:   "alive.txt",
+			},
+			&cli.BoolFlag{
+				Name:    "auto",
+				Aliases: []string{"a"},
+				Usage:   "whether to spy automatically",
+				Value:   true,
 			},
 			&cli.BoolFlag{
 				Name:    "silent",

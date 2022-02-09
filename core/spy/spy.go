@@ -52,7 +52,6 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 						mutex.Unlock()
 						// 发现段内一个IP存活表示该段存活 不再检查该段
 						if !force {
-							println("now")
 							break
 						}
 					} else {
@@ -153,22 +152,22 @@ func getNetIPS(cidrs []string) []net.IP {
 	return netips
 }
 
-func getAllCIDR(cidrs, keywords []string) []string {
+func genAllCIDR() []string {
 	var all []string
-	if cidrs == nil {
-		for _, keyword := range keywords {
-			if keyword == "192" {
-				all = append(all, "192.168.0.0/16")
-			}
-			if keyword == "172" {
-				all = append(all, "172.16.0.0/12")
-			}
-			if keyword == "10" {
-				all = append(all, "10.0.0.0/8")
+	c := [9]int{1, 32, 64, 96, 128, 160, 192, 224, 255}
+	for i := 1; i <= 255; i++ {
+		for j := 1; j <= 255; j++ {
+			for _, k := range c {
+				cidr := fmt.Sprintf("%v.%v.%v.0/24", i, j, k)
+				all = append(all, cidr)
 			}
 		}
-		return all
 	}
+	return all
+}
+
+func mergeCIDR(cidrs []string, auto bool) []string {
+	var all []string
 	for _, cidr := range cidrs {
 		_, _, err := net.ParseCIDR(cidr)
 		if err != nil {
@@ -176,6 +175,15 @@ func getAllCIDR(cidrs, keywords []string) []string {
 			continue
 		}
 		all = append(all, cidr)
+	}
+	if auto {
+		if misc.IsPureIntranet() {
+			Log.Debug("the current network environment is pure intranet")
+			all = genAllCIDR()
+		} else {
+			all = []string{"192.168.0.0/16", "172.16.0.0/12", "10.0.0.0/8",
+				"100.64.0.0/10", "59.129.0.0/10", "3.1.0.0/10"}
+		}
 	}
 	return all
 }
@@ -202,9 +210,9 @@ func Spy(c *cli.Context, check func(ip string) bool) {
 	Log.Debugf("save path: %v", path)
 	force = c.Bool("force")
 	number := checkEndNum(c.StringSlice("end"))
-	keywords := c.StringSlice("net")
+	auto := c.Bool("auto")
 	cidrs := c.StringSlice("cidr")
-	allcidr := getAllCIDR(cidrs, keywords)
+	allcidr := mergeCIDR(cidrs, auto)
 	Log.Debugf("all cidr %v", allcidr)
 	netips := getNetIPS(allcidr)
 	count := c.Int("random")

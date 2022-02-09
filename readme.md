@@ -18,15 +18,19 @@ netspy正是一款应用而生的小工具，体积较小，速度极快，支�
 
 2. 使用icmpspy模块进行探测
 
+   使用icmpspy模块进行自动探测，netspy默认会开启自动探测，自动探测网段为："192.168.0.0/16", "172.16.0.0/12", "10.0.0.0/8",
+   "100.64.0.0/10", "59.129.0.0/10", "3.1.0.0/10"，欢迎补充！
     ```bash
     netspy is
     ```
-   注：当没有权限发送icmp包时可以尝试使用arpspy模块。
+   注：当没有权限发送icmp包时可以尝试使用pingspy模块。
 
 3. 使用arpspy模块进行探测
-    指定使用eth0网络接口进行arp协议探测。
+
+    指定使用eth0网络接口进行arp协议探测，探测网段为192.168.0.0/16和59.129.0.0/10，关闭自动探测。
+
     ```bash
-    netspy as -i eth0
+    netspy as -i eth0 -c 192.168.0.0/16 -c 59.129.0.0/10 -a false
     ```
 
 4. 使用tcpspy模块进行探测
@@ -45,7 +49,7 @@ netspy正是一款应用而生的小工具，体积较小，速度极快，支�
 6. 使用icmpspy模块强制进行段内所有IP存活探测
 
     ```bash
-    netspy -f -c 192.168.91.0/24 -r 255 is
+    netspy -a false -c 192.168.91.0/24 -r 255 -f is
     ```
 
 ## 😸 帮助信息
@@ -76,7 +80,6 @@ COMMANDS:
    help, h       显示帮助信息
 
 GLOBAL OPTIONS:
-   --net value, -n value      指定探测网段(默认: "192", "172", "10")
    --cidr value, -c value     指定探测CIDR(例如: 172.16.0.0/12)
    --end value, -e value      指定IP末尾数字(默认: 1, 254, 2, 255)
    --random value, -r value   IP随机末尾数字的个数(默认: 3)
@@ -84,6 +87,7 @@ GLOBAL OPTIONS:
    --thread value, -t value   并发数量(默认: cpu * 20)
    --timeout value, -m value  发包超时(默认: 1秒)
    --output value, -o value   存活网段结果保存路径(默认: "alive.txt")
+   --auto, -a                 是否进行自动探测(默认: true)
    --silent, -s               只显示存活网段(默认: false)
    --debug, -d                显示调试信息(默认: false)
    --help, -h                 显示帮助信息(默认: false)
@@ -92,7 +96,8 @@ GLOBAL OPTIONS:
 ## 🏂 计划功能
 
 * [x] 支持自定义网段探测
-* [ ] 支持探测纯内网公网IP当内网IP使用的情况
+* [x] 支持探测纯内网中把公网IP当内网IP使用的情况
+* [ ] 支持探测进度显示
 
 欢迎反馈贴近实战的建议！
 
