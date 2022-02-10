@@ -62,6 +62,6 @@ func Spy(c *cli.Context) {
 	Log.Info("use arp protocol to spy")
 	checkOs()
 	iface = c.String("interface")
-	timeout = time.Duration(c.Int("timeout")) * time.Second
+	timeout = time.Duration(c.Int("timeout")) * time.Millisecond
 	spy.Spy(c, check)
 }

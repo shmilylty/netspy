@@ -55,8 +55,8 @@ func Execute() {
 			&cli.IntFlag{
 				Name:    "timeout",
 				Aliases: []string{"m"},
-				Usage:   "packet sending timeout",
-				Value:   1,
+				Usage:   "packet sending timeout millisecond",
+				Value:   100,
 			},
 			&cli.PathFlag{
 				Name:    "output",

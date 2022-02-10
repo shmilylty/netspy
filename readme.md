@@ -85,7 +85,7 @@ GLOBAL OPTIONS:
    --random value, -r value   IP随机末尾数字的个数(默认: 3)
    --force value, -f value    强制探测所有生成的IP(默认: false)
    --thread value, -t value   并发数量(默认: cpu * 20)
-   --timeout value, -m value  发包超时(默认: 1秒)
+   --timeout value, -m value  发包超时毫秒(默认: 100)
    --output value, -o value   存活网段结果保存路径(默认: "alive.txt")
    --auto, -a                 是否进行自动探测(默认: true)
    --silent, -s               只显示存活网段(默认: false)

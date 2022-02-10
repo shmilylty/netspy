@@ -59,6 +59,6 @@ func Spy(c *cli.Context) {
 	Log.Info("use icmp protocol to spy")
 	checkPermission()
 	times = c.Int("times")
-	timeout = time.Duration(c.Int("timeout")) * time.Second
+	timeout = time.Duration(c.Int("timeout")) * time.Millisecond
 	spy.Spy(c, check)
 }
