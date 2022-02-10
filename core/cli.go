@@ -65,10 +65,10 @@ func Execute() {
 				Value:   "alive.txt",
 			},
 			&cli.BoolFlag{
-				Name:    "auto",
-				Aliases: []string{"a"},
-				Usage:   "whether to spy automatically",
-				Value:   true,
+				Name:    "special",
+				Aliases: []string{"x"},
+				Usage:   "whether to spy special intranet",
+				Value:   false,
 			},
 			&cli.BoolFlag{
 				Name:    "silent",

@@ -205,7 +205,7 @@ func genAllCIDR() []string {
 	return all
 }
 
-func mergeCIDR(cidrs []string, auto bool) []string {
+func mergeCIDR(cidrs []string, special bool) []string {
 	var all []string
 	for _, cidr := range cidrs {
 		_, _, err := net.ParseCIDR(cidr)
@@ -218,13 +218,17 @@ func mergeCIDR(cidrs []string, auto bool) []string {
 	if all != nil {
 		return all
 	}
-	if auto {
+	if all == nil {
+		c := []string{"192.168.0.0/16", "172.16.0.0/12", "10.0.0.0/8"}
+		all = append(all, c...)
+	}
+	if special {
 		if misc.IsPureIntranet() {
 			Log.Debug("the current network environment is pure intranet")
 			all = genAllCIDR()
 		} else {
-			all = []string{"192.168.0.0/16", "172.16.0.0/12", "10.0.0.0/8",
-				"100.64.0.0/10", "59.192.0.0/10", "3.1.0.0/10"}
+			c := []string{"100.64.0.0/10", "59.192.0.0/10", "3.1.0.0/10"}
+			all = append(all, c...)
 		}
 	}
 	return all
@@ -252,9 +256,9 @@ func Spy(c *cli.Context, check func(ip string) bool) {
 	Log.Debugf("save path: %v", path)
 	force = c.Bool("force")
 	number := checkEndNum(c.StringSlice("end"))
-	auto := c.Bool("auto")
+	special := c.Bool("special")
 	cidrs := c.StringSlice("cidr")
-	allcidr := mergeCIDR(cidrs, auto)
+	allcidr := mergeCIDR(cidrs, special)
 	Log.Debugf("all cidr %v", allcidr)
 	netips := getNetIPS(allcidr)
 	count := c.Int("random")
