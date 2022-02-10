@@ -85,10 +85,15 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 	wg.Add(1)
 	go func() {
 		all := float64(len(ips) * num)
+		i := 0
 		for {
 			time.Sleep(10 * time.Second)
+			i += 1
 			spied := float64(count)
-			Log.Infof("all: %v spied: %v ratio: %.2f", all, spied, spied/all)
+			speed := float64(count) / (float64(i) * 10)
+			remain := (all - spied) / speed
+			Log.Infof("all: %v spied: %v ratio: %.2f speed: %.2f it/s remain: %.0fs",
+				all, spied, spied/all, speed, remain)
 			if all == spied {
 				wg.Done()
 				break
