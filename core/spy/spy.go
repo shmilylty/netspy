@@ -10,23 +10,26 @@ import (
 	"runtime"
 	"strconv"
 	"sync"
+	"sync/atomic"
+	"time"
 )
 
 var (
 	thread int
 	path   string
 	force  bool
-	mutex  = new(sync.Mutex)
 )
 
 func goSpy(ips [][]string, check func(ip string) bool) []string {
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-	if err != nil {
-		panic(err)
-	}
 	var online []string
 	var wg sync.WaitGroup
-	var ipc = make(chan []string)
+	var ipc = make(chan []string, 10000)
+	var onc = make(chan string, 1000)
+	var count int32
+
+	if ips == nil {
+		return online
+	}
 	go func() {
 		for _, ipg := range ips {
 			ipc <- ipg
@@ -34,22 +37,18 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 		defer close(ipc)
 	}()
 
+	// 探测协程
 	for i := 0; i < thread; i++ {
 		wg.Add(1)
 		go func(ipc chan []string) {
-			defer wg.Done()
 			for ipg := range ipc {
 				for _, ip := range ipg {
 					if check(ip) {
 						online = append(online, ip)
 						Log.Debugf("%s alive", ip)
 						Log.Printf("%s/24", ip)
-						mutex.Lock()
-						_, err := file.WriteString(fmt.Sprintf("%s/24\n", ip))
-						if err != nil {
-							Log.Error(err.Error())
-						}
-						mutex.Unlock()
+						s := fmt.Sprintf("%s/24\n", ip)
+						onc <- s
 						// 发现段内一个IP存活表示该段存活 不再检查该段
 						if !force {
 							break
@@ -59,9 +58,44 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 						continue
 					}
 				}
+				atomic.AddInt32(&count, int32(len(ipg)))
 			}
+			defer wg.Done()
 		}(ipc)
 	}
+
+	// 保存协程
+	file, err := os.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		Log.Error(err.Error())
+	}
+	defer file.Close()
+
+	go func(onc chan string) {
+		for s := range onc {
+			_, err := file.WriteString(s)
+			if err != nil {
+				Log.Error(err.Error())
+			}
+		}
+	}(onc)
+
+	// 统计协程
+	num := len(ips[0])
+	wg.Add(1)
+	go func() {
+		all := float64(len(ips) * num)
+		for {
+			time.Sleep(10 * time.Second)
+			spied := float64(count)
+			Log.Infof("all: %v spied: %v ratio: %.2f", all, spied, spied/all)
+			if all == spied {
+				wg.Done()
+				break
+			}
+		}
+	}()
+
 	wg.Wait()
 	return online
 }
@@ -175,6 +209,9 @@ func mergeCIDR(cidrs []string, auto bool) []string {
 			continue
 		}
 		all = append(all, cidr)
+	}
+	if all != nil {
+		return all
 	}
 	if auto {
 		if misc.IsPureIntranet() {
