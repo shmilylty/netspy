@@ -38,7 +38,7 @@ func Execute() {
 				Name:    "random",
 				Aliases: []string{"r"},
 				Usage:   "the number of random ending digits in ip",
-				Value:   3,
+				Value:   1,
 			},
 			&cli.BoolFlag{
 				Name:    "force",
