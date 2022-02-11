@@ -40,12 +40,6 @@ func Execute() {
 				Usage:   "the number of random ending digits in ip",
 				Value:   1,
 			},
-			&cli.BoolFlag{
-				Name:    "force",
-				Aliases: []string{"f"},
-				Usage:   "force spy all generated ip",
-				Value:   false,
-			},
 			&cli.IntFlag{
 				Name:        "thread",
 				Aliases:     []string{"t"},
@@ -65,9 +59,21 @@ func Execute() {
 				Value:   "alive.txt",
 			},
 			&cli.BoolFlag{
-				Name:    "special",
+				Name:    "rapid",
 				Aliases: []string{"x"},
-				Usage:   "whether to spy special intranet",
+				Usage:   "rapid spy mode",
+				Value:   false,
+			},
+			&cli.BoolFlag{
+				Name:    "special",
+				Aliases: []string{"i"},
+				Usage:   "spy special intranet",
+				Value:   false,
+			},
+			&cli.BoolFlag{
+				Name:    "force",
+				Aliases: []string{"f"},
+				Usage:   "force spy all generated ip",
 				Value:   false,
 			},
 			&cli.BoolFlag{

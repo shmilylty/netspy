@@ -17,6 +17,7 @@ import (
 var (
 	thread int
 	path   string
+	rapid  bool
 	force  bool
 )
 
@@ -106,6 +107,9 @@ func goSpy(ips [][]string, check func(ip string) bool) []string {
 }
 
 func setThread(i int) int {
+	if rapid {
+		return runtime.NumCPU() * 40
+	}
 	if i == 0 {
 		return runtime.NumCPU() * 20
 	}
@@ -234,8 +238,12 @@ func mergeCIDR(cidrs []string, special bool) []string {
 	return all
 }
 
-func checkEndNum(nums []string) []int {
+func setEndNum(nums []string) []int {
 	var tail []int
+	if rapid {
+		tail = append(tail, 1)
+		return tail
+	}
 	for _, s := range nums {
 		i, err := strconv.Atoi(s)
 		if err != nil {
@@ -249,19 +257,30 @@ func checkEndNum(nums []string) []int {
 	return tail
 }
 
+func setRandomNum(i int) int {
+	if rapid {
+		return 0
+	}
+	if i >= 0 && i <= 255 {
+		return i
+	}
+	return 1
+}
+
 func Spy(c *cli.Context, check func(ip string) bool) {
+	rapid = c.Bool("rapid")
 	thread = setThread(c.Int("thread"))
 	Log.Debugf("%v threads", thread)
 	path = c.Path("output")
 	Log.Debugf("save path: %v", path)
 	force = c.Bool("force")
-	number := checkEndNum(c.StringSlice("end"))
+	number := setEndNum(c.StringSlice("end"))
 	special := c.Bool("special")
 	cidrs := c.StringSlice("cidr")
 	allcidr := mergeCIDR(cidrs, special)
 	Log.Debugf("all cidr %v", allcidr)
 	netips := getNetIPS(allcidr)
-	count := c.Int("random")
+	count := setRandomNum(c.Int("random"))
 	ips := GenIPS(netips, number, count)
 	goSpy(ips, check)
 }

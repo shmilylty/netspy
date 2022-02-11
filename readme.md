@@ -4,8 +4,6 @@
 
 ![image](https://user-images.githubusercontent.com/24275308/148667657-56d55fbe-e530-43a0-8633-e7aa1e3a03db.png)
 
-
-
 当我们进入内网后想要扩大战果，那我们可能首先想知道当前主机能通哪些内网段。
 
 netspy正是一款应用而生的小工具，体积较小，速度极快，支持跨平台，支持多种协议探测，希望能帮到你！
@@ -48,8 +46,15 @@ netspy正是一款应用而生的小工具，体积较小，速度极快，支�
 6. 使用icmpspy模块强制进行段内所有IP存活探测
 
     ```bash
-    netspy -a false -c 192.168.91.0/24 -r 255 -f is
+    netspy -c 192.168.91.0/24 -r 255 -f is
     ```
+
+7. 使用icmpspy模块急速探测模式
+
+   ```bash
+    netspy -x is
+    ```
+   注：急速模式协程数量为cpu核数*40，只探测段内网关。
 
 ## 😸 帮助信息
 
@@ -82,11 +87,12 @@ GLOBAL OPTIONS:
    --cidr value, -c value     指定探测CIDR(例如: 172.16.0.0/12)
    --end value, -e value      指定IP末尾数字(默认: 1, 254, 2, 255)
    --random value, -r value   IP随机末尾数字的个数(默认: 1)
-   --force value, -f value    强制探测所有生成的IP(默认: false)
    --thread value, -t value   并发数量(默认: cpu * 20)
    --timeout value, -m value  发包超时毫秒(默认: 100)
    --output value, -o value   存活网段结果保存路径(默认: "alive.txt")
-   --special, -x              是否探测特殊内网(默认: false)
+   --rapid, -x                急速探测模式(默认: false)
+   --special, -i              是否探测特殊内网(默认: false)
+   --force value, -f value    强制探测所有生成的IP(默认: false)
    --silent, -s               只显示存活网段(默认: false)
    --debug, -d                显示调试信息(默认: false)
    --help, -h                 显示帮助信息(默认: false)
@@ -94,8 +100,10 @@ GLOBAL OPTIONS:
 
 ## 🏂 计划功能
 
+* [x] 支持多种协议探测
 * [x] 支持自定义网段探测
 * [x] 支持探测特殊内网
+* [x] 支持探测段内所有主机
 * [x] 支持探测进度显示
 
 欢迎反馈贴近实战的建议！
