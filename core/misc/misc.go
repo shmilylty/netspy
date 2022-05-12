@@ -34,11 +34,11 @@ func IsPing(ip, times, timeout string) bool {
 		break
 	case "linux":
 		cmd = exec.Command("/bin/sh", "-c",
-			"ping -c "+times+" -w "+timeout+" "+ip+" >/dev/null && echo true || echo false")
+			"ping -c "+times+" -w "+timeout+" "+ip+" > /dev/null && echo true || echo false")
 		break
 	case "darwin":
 		cmd = exec.Command("/bin/sh", "-c",
-			"ping -c "+times+" -w "+timeout+" "+ip+" >/dev/null && echo true || echo false")
+			"ping -c "+times+" -w "+timeout+" "+ip+" > /dev/null && echo true || echo false")
 		break
 	default:
 		cmd = nil
